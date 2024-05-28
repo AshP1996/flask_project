@@ -1,8 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import Email, DataRequired
@@ -11,18 +6,15 @@ from wtforms.validators import Email, DataRequired
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username',
-                         id='username_login',
+    email = StringField('Email',
+                         id='email_login',
                          validators=[DataRequired()])
     password = PasswordField('Password',
                              id='pwd_login',
                              validators=[DataRequired()])
 
 
-class CreateAccountForm(FlaskForm):
-    username = StringField('Username',
-                         id='username_create',
-                         validators=[DataRequired()])
+class SignupForm(FlaskForm):
     email = StringField('Email',
                       id='email_create',
                       validators=[DataRequired(), Email()])

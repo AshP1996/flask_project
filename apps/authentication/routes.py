@@ -1,8 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from flask import render_template, redirect, request, url_for
 from flask_login import (
     current_user,
@@ -12,7 +7,7 @@ from flask_login import (
 
 from apps import db, login_manager
 from apps.authentication import blueprint
-from apps.authentication.forms import LoginForm, CreateAccountForm
+from apps.authentication.forms import LoginForm, SignupForm
 from apps.authentication.models import Users
 
 from apps.authentication.util import verify_pass
@@ -31,11 +26,11 @@ def login():
     if 'login' in request.form:
 
         # read form data
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
 
         # Locate user
-        user = Users.query.filter_by(username=username).first()
+        user = Users.query.filter_by(email=email).first()
 
         # Check the password
         if user and verify_pass(password, user.password):
@@ -54,21 +49,14 @@ def login():
     return redirect(url_for('home_blueprint.index'))
 
 
-@blueprint.route('/register', methods=['GET', 'POST'])
+@blueprint.route('/signup', methods=['GET', 'POST'])
 def register():
-    create_account_form = CreateAccountForm(request.form)
-    if 'register' in request.form:
+    signup_form = SignupForm(request.form)
+    if request.method == 'POST' and 'signup' in request.form:
+        print(request)
 
-        username = request.form['username']
         email = request.form['email']
-
-        # Check usename exists
-        user = Users.query.filter_by(username=username).first()
-        if user:
-            return render_template('accounts/register.html',
-                                   msg='Username already registered',
-                                   success=False,
-                                   form=create_account_form)
+        password = request.form['password']
 
         # Check email exists
         user = Users.query.filter_by(email=email).first()
@@ -76,20 +64,20 @@ def register():
             return render_template('accounts/register.html',
                                    msg='Email already registered',
                                    success=False,
-                                   form=create_account_form)
+                                   form=signup_form)
 
         # else we can create the user
-        user = Users(**request.form)
-        db.session.add(user)
+        new_user = Users.create_user(email=email, password=password, role='user')
+        db.session.add(new_user)
         db.session.commit()
 
         return render_template('accounts/register.html',
                                msg='User created please <a href="/login">login</a>',
                                success=True,
-                               form=create_account_form)
+                               form=signup_form)
 
     else:
-        return render_template('accounts/register.html', form=create_account_form)
+        return render_template('accounts/register.html', form=signup_form)
 
 
 @blueprint.route('/logout')

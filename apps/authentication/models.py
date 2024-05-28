@@ -1,23 +1,19 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from flask_login import UserMixin
+from sqlalchemy import CheckConstraint
 
 from apps import db, login_manager
 
 from apps.authentication.util import hash_pass
+
 
 class Users(db.Model, UserMixin):
 
     __tablename__ = 'Users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
-    role = db.Column(db.String(10))  # New field for role
+    role = db.Column(db.String(10), CheckConstraint("role IN ('admin', 'user')"), nullable=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -31,10 +27,16 @@ class Users(db.Model, UserMixin):
             if property == 'password':
                 value = hash_pass(value)  # we need bytes here (not plain str)
 
+            if property == 'role' and value not in ['admin', 'user']:
+                raise ValueError("Role must be either 'admin' or 'user'")
+
             setattr(self, property, value)
 
+    @classmethod
+    def create_user(cls, email, password, role='user'):
+        return cls(email=email, password=password, role=role)
     def __repr__(self):
-        return str(self.username)
+        return str(self.email)
 
 
 @login_manager.user_loader
@@ -44,6 +46,6 @@ def user_loader(id):
 
 @login_manager.request_loader
 def request_loader(request):
-    username = request.form.get('username')
-    user = Users.query.filter_by(username=username).first()
+    email = request.form.get('email')
+    user = Users.query.filter_by(email=email).first()
     return user if user else None
