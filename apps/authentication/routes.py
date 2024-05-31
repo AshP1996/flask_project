@@ -88,17 +88,19 @@ def register():
 @blueprint.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if current_user.is_authenticated:
-        print("user logrd in")
+        print("current user", current_user)
+        logout_user()
         return redirect(url_for('authentication_blueprint.login'))
     form = ForgotPasswordForm(request.form)
     if request.method == 'POST' and 'email' in request.form:
         email = request.form['email']
         user = Users.query.filter_by(email=email).first()
         if user:
-            send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
-        print("user logrd in")
-        return redirect(url_for('authentication_blueprint.signup'))
+            # send_password_reset_email(user)
+            flash('Check your email for the instructions to reset your password')
+        flash('Not Found User')
+        print("User Not Found!!!!!!!!!!!!!!!!!!!!!!")
+        return redirect(url_for('authentication_blueprint.login'))
     return render_template('accounts/forgot_password.html', form=form)
 
 

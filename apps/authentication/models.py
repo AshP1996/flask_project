@@ -64,6 +64,7 @@ def user_loader(id):
 
 @login_manager.request_loader
 def request_loader(request):
-    email = request.form.get('email')
-    user = Users.query.filter_by(email=email).first()
-    return user if user else None
+    # email = request.form.get('email')
+    # user = Users.query.filter_by(email=email).first()
+    # return user if user else None
+    None
