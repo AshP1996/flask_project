@@ -1,9 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
-from wtforms.validators import Email, DataRequired
-
-# login and registration
-
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import Email, DataRequired, EqualTo
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
@@ -13,7 +10,6 @@ class LoginForm(FlaskForm):
                              id='pwd_login',
                              validators=[DataRequired()])
 
-
 class SignupForm(FlaskForm):
     email = StringField('Email',
                       id='email_create',
@@ -21,3 +17,22 @@ class SignupForm(FlaskForm):
     password = PasswordField('Password',
                              id='pwd_create',
                              validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     id='pwd_confirm',
+                                     validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
+
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email',
+                         id='email_forgot',
+                         validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password',
+                             id='pwd_reset',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     id='pwd_reset_confirm',
+                                     validators=[DataRequired(), EqualTo('password', message='Passwords must match')])

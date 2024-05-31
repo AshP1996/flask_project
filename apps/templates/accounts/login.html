@@ -4,6 +4,25 @@
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
+<style>
+    .text-center {
+        text-align: center;
+    }
+
+    .text-center.social-icons {
+        margin-top: 20px; /* Add margin from top */
+    }
+    
+    .social-icons span {
+        margin-left: 5px;  /* Add left margin */
+        margin-right: 5px; /* Add right margin */
+    }
+    
+    .social-icons i {
+        font-size: 24px;  /* Adjust the size as needed */
+        color: #000;      /* Adjust the color as needed */
+    }
+</style>
 
 {% block content %}
 
@@ -19,9 +38,9 @@
                         <div class="signin-inner my-4 my-lg-0 bg-white shadow-soft border rounded border-gray-300 p-4 p-lg-5 w-100 fmxw-500">
                             <div class="text-center text-md-center mb-4 mt-md-0">
                                 <h1 class="mb-0 h3">
-                                    <a href="https://appseed.us/product/pixel-bootstrap/flask/" target="_blank">Flask Pixel UI</a> - Login
+                                    <a href="https://appseed.us/product/pixel-bootstrap/flask/" target="_blank">Sign in to our platform</a>
                                 </h1>
-                                <br />
+                                <!-- <br />
                                 <span class="font-weight-normal">
                                     {% if msg %}
                                         <span class="text-danger">
@@ -30,7 +49,7 @@
                                     {% else %}
                                         Add your credentials
                                     {% endif %}                                  
-                                </span>
+                                </span> -->
                             </div>
                             <form method="post" action="" class="mt-4">
 
@@ -38,7 +57,7 @@
 
                                 <!-- Form -->
                                 <div class="form-group mb-4">
-                                    <label for="email">Email</label>
+                                    <label for="email">Your Email</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon1"><span class="fas fa-user"></span></span>
                                         {{ form.email(class="form-control") }}
@@ -48,7 +67,7 @@
                                 <div class="form-group">
                                     <!-- Form -->
                                     <div class="form-group mb-4">
-                                        <label for="password">Password</label>
+                                        <label for="password">Your Password</label>
                                         <div class="input-group">
                                             <span class="input-group-text" id="basic-addon2"><span class="fas fa-unlock-alt"></span></span>
                                             {{ form.password(class="form-control", type="password") }}
@@ -62,22 +81,27 @@
                                               Remember me
                                             </label>
                                         </div>
-                                        <div><a href="{{ url_for('authentication_blueprint.register') }}" class="text-right">Register</a></div>
+                                        <div><a href="{{ url_for('authentication_blueprint.forgot_password') }}" class="text-right">Lost Password</a></div>
                                     </div>
                                 </div>
                                 <div class="d-grid">
                                     <button type="submit" name="login" class="btn btn-primary">Sign in</button>
                                 </div>
+                                
+                                <div class="text-center">or login with</div>
+
+                                <div class="text-center social-icons" style="margin-top: 20px;">
+                                    <span style="margin: 0 5px;"><a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a></span>
+                                    <span style="margin: 0 5px;"><a href="https://twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i></a></span>
+                                    <span style="margin: 0 5px;"><a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></span>
+                                </div>
+                                
                             </form>
 
                             <br />
 
                             <div class="d-flex justify-content-center align-items-center mt-4">
-                                <span class="fw-normal">
-                                    &copy; Themesberg - coded by 
-                                    <a href="https://appseed.us" target="_blank"
-                                       class="fw-bold text-underline">AppSeed</a>
-                                </span>
+                                <span class="fw-normal text-center">Not Registered? <a href="{{ url_for('authentication_blueprint.register') }}" class="text-right">Create account</a></span>
                             </div>
                         </div>
                     </div>

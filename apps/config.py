@@ -49,6 +49,13 @@ class Config(object):
 
         # This will create a file in <app> FOLDER
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite3')
+
+    # Mail settings
+    MAIL_SERVER = 'localhost'
+    MAIL_PORT = 8025
+    MAIL_USE_TLS = False
+    # MAIL_USERNAME = 'your-mailtrap-username'
+    # MAIL_PASSWORD = 'your-mailtrap-password'
     
 class ProductionConfig(Config):
     DEBUG = False

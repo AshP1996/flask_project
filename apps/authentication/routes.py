@@ -1,4 +1,5 @@
 from flask import render_template, redirect, request, url_for
+from flask import render_template, redirect, request, url_for, flash
 from flask_login import (
     current_user,
     login_user,
@@ -7,11 +8,15 @@ from flask_login import (
 
 from apps import db, login_manager
 from apps.authentication import blueprint
+from apps.authentication.forms import LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from apps.authentication.forms import LoginForm, SignupForm
 from apps.authentication.models import Users
 
 from apps.authentication.util import verify_pass
-
+from apps.mail.mail import send_password_reset_email
+# Setup URL serializer
+serializer = URLSafeTimedSerializer('SECRET_KEY')
 
 @blueprint.route('/')
 def route_default():
@@ -79,6 +84,41 @@ def register():
     else:
         return render_template('accounts/register.html', form=signup_form)
 
+
+@blueprint.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        print("user logrd in")
+        return redirect(url_for('authentication_blueprint.login'))
+    form = ForgotPasswordForm(request.form)
+    if request.method == 'POST' and 'email' in request.form:
+        email = request.form['email']
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        print("user logrd in")
+        return redirect(url_for('authentication_blueprint.signup'))
+    return render_template('accounts/forgot_password.html', form=form)
+
+
+@blueprint.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except SignatureExpired:
+        flash('The password reset link is expired.', 'error')
+        return redirect(url_for('authentication_blueprint.forgot_password'))
+
+    form = ResetPasswordForm(request.form)
+    if request.method == 'POST' and 'password' in request.form:
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            user.password = form.password.data  # Make sure to hash the password
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('authentication_blueprint.login'))
+    return render_template('accounts/reset_password.html', form=form)
 
 @blueprint.route('/logout')
 def logout():
