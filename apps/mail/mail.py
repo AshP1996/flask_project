@@ -13,7 +13,7 @@ def send_password_reset_email(user):
     send_email('[Microblog] Reset Your Password',
                sender="admin@hello.com",
                recipients=[user.email],
-               text_body=render_template('email/reset_password.txt',
+               text_body=render_template('mail/reset_password.txt',
                                          user=user, token=token),
-               html_body=render_template('email/reset_password.html',
+               html_body=render_template('mail/reset_password.html',
                                          user=user, token=token))

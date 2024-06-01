@@ -38,6 +38,9 @@ class Users(db.Model, UserMixin):
     @classmethod
     def create_user(cls, email, password, role='user'):
         return cls(email=email, password=password, role=role)
+    
+    def set_password(self, password):
+        self.password = hash_pass(password)
     def __repr__(self):
         return str(self.email)
     
